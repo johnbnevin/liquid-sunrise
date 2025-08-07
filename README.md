@@ -68,3 +68,5 @@ Anyone wanting a beautiful, gamified checklist experience
 Liquid Sunrise v1.0 - Where productivity meets beauty ☀️
 Built with love for Android users who want their daily tasks to feel as good as they look.
 
+https://johnbnevin.github.io/liquid-sunrise/index.html
+
