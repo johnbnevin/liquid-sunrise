@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Liquid Sunrise - Gamified Daily Checklist</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='12' fill='%23ff8c00'/><path d='M16 4v8m0 8v8m12-12h-8m-8 0H4' stroke='%23ffeb3b' stroke-width='2'/></svg>">
     <style>
         * {
             margin: 0;
@@ -11,13 +12,52 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --bg-primary: #000;
+            --bg-secondary: #111;
+            --bg-tertiary: #222;
+            --text-primary: #fff;
+            --text-secondary: #ccc;
+            --text-muted: #666;
+            --border-primary: #333;
+            --border-secondary: #444;
+            --accent-primary: #ff8c00;
+            --accent-secondary: #ffeb3b;
+            --success-bg: #1a3d1a;
+            --success-border: #4caf50;
+            --danger: #dc3545;
+            --danger-hover: #c82333;
+            --blue: #007bff;
+            --blue-hover: #0056b3;
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #fff;
+            --bg-secondary: #f8f9fa;
+            --bg-tertiary: #e9ecef;
+            --text-primary: #212529;
+            --text-secondary: #495057;
+            --text-muted: #6c757d;
+            --border-primary: #dee2e6;
+            --border-secondary: #ced4da;
+            --accent-primary: #ff8c00;
+            --accent-secondary: #ffc107;
+            --success-bg: #d4edda;
+            --success-border: #28a745;
+            --danger: #dc3545;
+            --danger-hover: #c82333;
+            --blue: #007bff;
+            --blue-hover: #0056b3;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #000;
-            color: #fff;
+            background: var(--bg-primary);
+            color: var(--text-primary);
             min-height: 100vh;
-            padding: 20px;
-            line-height: 1.6;
+            padding: 15px;
+            line-height: 1.5;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         .container {
@@ -25,95 +65,159 @@
             margin: 0 auto;
         }
 
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
         h1 {
-            text-align: center;
-            margin-bottom: 30px;
-            color: #ff8c00;
-            font-size: 2.5em;
+            color: var(--accent-primary);
+            font-size: 2.2em;
             text-shadow: 0 2px 4px rgba(255, 140, 0, 0.3);
+            margin: 0;
+        }
+
+        .theme-toggle {
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border-secondary);
+            border-radius: 20px;
+            padding: 8px 12px;
+            cursor: pointer;
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--accent-primary);
+            background: var(--bg-secondary);
+        }
+
+        .tabs {
+            display: flex;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-primary);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 12px 16px;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .tab-button.active {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+        }
+
+        .tab-button:hover:not(.active) {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
         }
 
         .stats {
-            background: #111;
-            border: 2px solid #333;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 30px;
-            text-align: center;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-primary);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
         }
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
         }
 
         .stat-item {
-            background: #222;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #444;
+            background: var(--bg-tertiary);
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid var(--border-secondary);
+            text-align: center;
         }
 
         .stat-value {
-            font-size: 1.8em;
+            font-size: 1.6em;
             font-weight: bold;
-            color: #ffeb3b;
+            color: var(--accent-secondary);
             display: block;
         }
 
         .stat-label {
-            font-size: 0.9em;
-            color: #ccc;
-            margin-top: 5px;
+            font-size: 0.85em;
+            color: var(--text-secondary);
+            margin-top: 4px;
         }
 
         .form-section {
-            background: #111;
-            border: 2px solid #333;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 30px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-primary);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
         }
 
         .input-group {
             display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
+            gap: 8px;
+            margin-bottom: 12px;
         }
 
-        #newItemInput {
+        .newItemInput {
             flex: 1;
-            padding: 12px;
-            border: 2px solid #444;
-            border-radius: 8px;
-            background: #222;
-            color: #fff;
+            padding: 10px;
+            border: 2px solid var(--border-secondary);
+            border-radius: 6px;
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
             font-size: 16px;
         }
 
-        #newItemInput:focus {
+        .newItemInput:focus {
             outline: none;
-            border-color: #ff8c00;
+            border-color: var(--accent-primary);
             box-shadow: 0 0 0 2px rgba(255, 140, 0, 0.2);
         }
 
         .btn {
-            padding: 12px 20px;
+            padding: 10px 16px;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
+            border-radius: 6px;
+            font-size: 14px;
             cursor: pointer;
             font-weight: bold;
             transition: all 0.3s ease;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
         }
 
         .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         .btn:active {
@@ -121,79 +225,79 @@
         }
 
         .btn-primary {
-            background: #ff8c00;
-            color: #000;
+            background: var(--accent-primary);
+            color: var(--bg-primary);
         }
 
         .btn-primary:hover {
-            background: #ffeb3b;
+            background: var(--accent-secondary);
         }
 
         .btn-secondary {
-            background: #333;
-            color: #fff;
-            border: 2px solid #555;
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 2px solid var(--border-secondary);
         }
 
         .btn-secondary:hover {
-            background: #444;
-            border-color: #666;
+            background: var(--border-secondary);
+            border-color: var(--border-primary);
         }
 
         .btn-danger {
-            background: #dc3545;
+            background: var(--danger);
             color: #fff;
         }
 
         .btn-danger:hover {
-            background: #c82333;
+            background: var(--danger-hover);
         }
 
         .control-buttons {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
         }
 
         .checklist {
-            background: #111;
-            border: 2px solid #333;
-            border-radius: 12px;
-            padding: 20px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-primary);
+            border-radius: 10px;
+            padding: 15px;
         }
 
         .checklist-item {
-            background: #222;
-            border: 2px solid #444;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 10px;
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border-secondary);
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
             transition: all 0.3s ease;
             cursor: move;
         }
 
         .checklist-item:hover {
-            border-color: #666;
-            background: #252525;
+            border-color: var(--border-primary);
+            background: var(--bg-secondary);
         }
 
         .checklist-item.completed {
-            background: #1a3d1a;
-            border-color: #4caf50;
+            background: var(--success-bg);
+            border-color: var(--success-border);
         }
 
         .checklist-item.completed .item-text {
             text-decoration: line-through;
-            color: #888;
+            color: var(--text-muted);
         }
 
         .item-checkbox {
-            width: 24px;
-            height: 24px;
-            border: 3px solid #ff8c00;
+            width: 22px;
+            height: 22px;
+            border: 3px solid var(--accent-primary);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -204,25 +308,25 @@
         }
 
         .item-checkbox.completed {
-            background: #ff8c00;
-            color: #000;
+            background: var(--accent-primary);
+            color: var(--bg-primary);
             font-weight: bold;
         }
 
         .item-checkbox:hover {
-            border-color: #ffeb3b;
-            box-shadow: 0 0 10px rgba(255, 140, 0, 0.5);
+            border-color: var(--accent-secondary);
+            box-shadow: 0 0 8px rgba(255, 140, 0, 0.4);
         }
 
         .item-text {
             flex: 1;
-            font-size: 16px;
+            font-size: 15px;
             word-wrap: break-word;
         }
 
         .item-controls {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             opacity: 0;
             transition: opacity 0.3s ease;
         }
@@ -232,38 +336,38 @@
         }
 
         .control-btn {
-            width: 32px;
-            height: 32px;
+            width: 28px;
+            height: 28px;
             border: none;
-            border-radius: 6px;
+            border-radius: 4px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
+            font-size: 12px;
             transition: all 0.3s ease;
         }
 
         .edit-btn {
-            background: #007bff;
+            background: var(--blue);
             color: #fff;
         }
 
         .edit-btn:hover {
-            background: #0056b3;
+            background: var(--blue-hover);
         }
 
         .delete-btn {
-            background: #dc3545;
+            background: var(--danger);
             color: #fff;
         }
 
         .delete-btn:hover {
-            background: #c82333;
+            background: var(--danger-hover);
         }
 
         .drag-handle {
-            background: #666;
+            background: var(--text-muted);
             color: #fff;
             cursor: grab;
         }
@@ -273,14 +377,14 @@
         }
 
         .drag-handle:hover {
-            background: #777;
+            background: var(--text-secondary);
         }
 
         .empty-state {
             text-align: center;
-            color: #666;
+            color: var(--text-muted);
             font-style: italic;
-            padding: 40px 20px;
+            padding: 30px 15px;
         }
 
         .modal {
@@ -290,7 +394,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.7);
             z-index: 1000;
             align-items: center;
             justify-content: center;
@@ -301,45 +405,45 @@
         }
 
         .modal-content {
-            background: #222;
-            border: 2px solid #444;
-            border-radius: 12px;
-            padding: 30px;
-            max-width: 400px;
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border-secondary);
+            border-radius: 10px;
+            padding: 25px;
+            max-width: 380px;
             width: 90%;
             text-align: center;
         }
 
         .modal h3 {
-            color: #ff8c00;
-            margin-bottom: 15px;
+            color: var(--accent-primary);
+            margin-bottom: 12px;
         }
 
         .modal p {
-            margin-bottom: 25px;
-            color: #ccc;
+            margin-bottom: 20px;
+            color: var(--text-secondary);
         }
 
         .modal-buttons {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             justify-content: center;
         }
 
         .edit-input {
             width: 100%;
-            padding: 10px;
-            border: 2px solid #444;
-            border-radius: 6px;
-            background: #333;
-            color: #fff;
+            padding: 8px;
+            border: 2px solid var(--border-secondary);
+            border-radius: 4px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
             font-size: 16px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
         .edit-input:focus {
             outline: none;
-            border-color: #ff8c00;
+            border-color: var(--accent-primary);
         }
 
         .dragging {
@@ -347,13 +451,13 @@
         }
 
         .drag-over {
-            border-color: #ffeb3b !important;
-            background: #333 !important;
+            border-color: var(--accent-secondary) !important;
+            background: var(--bg-secondary) !important;
         }
 
         @media (max-width: 480px) {
             body {
-                padding: 15px;
+                padding: 10px;
             }
             
             .control-buttons {
@@ -361,52 +465,99 @@
             }
             
             .btn {
-                padding: 10px 16px;
-                font-size: 14px;
+                padding: 8px 12px;
+                font-size: 13px;
             }
             
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
+            }
+
+            h1 {
+                font-size: 1.8em;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Liquid Sunrise</h1>
+        <div class="header">
+            <h1>Liquid Sunrise</h1>
+            <button class="theme-toggle" onclick="app.toggleTheme()">🌓</button>
+        </div>
         
-        <div class="stats">
-            <h3 style="color: #ffeb3b; margin-bottom: 10px;">Today's Progress</h3>
-            <div class="stats-grid">
-                <div class="stat-item">
-                    <span class="stat-value" id="completedCount">0</span>
-                    <div class="stat-label">Completed</div>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-value" id="totalCount">0</span>
-                    <div class="stat-label">Total Tasks</div>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-value" id="completionRate">0%</span>
-                    <div class="stat-label">Success Rate</div>
-                </div>
+        <div class="tabs">
+            <button class="tab-button active" onclick="app.switchTab('daily')">Daily Checklist</button>
+            <button class="tab-button" onclick="app.switchTab('longterm')">Long Term Checklist</button>
+        </div>
 
+        <div id="dailyTab" class="tab-content active">
+            <div class="stats">
+                <h3 style="color: var(--accent-secondary); margin-bottom: 8px;">Today's Progress</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-value" id="dailyCompletedCount">0</span>
+                        <div class="stat-label">Completed</div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="dailyTotalCount">0</span>
+                        <div class="stat-label">Total Tasks</div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="dailyCompletionRate">0%</span>
+                        <div class="stat-label">Success Rate</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="input-group">
+                    <input type="text" id="dailyNewItemInput" class="newItemInput" placeholder="Add a new task..." maxlength="200">
+                    <button class="btn btn-primary" onclick="app.addItem('daily')">Add</button>
+                </div>
+                <div class="control-buttons">
+                    <button class="btn btn-secondary" onclick="app.newDay()">New Day</button>
+                    <button class="btn btn-danger" onclick="app.confirmClear('daily')">Clear All</button>
+                </div>
+            </div>
+
+            <div class="checklist">
+                <div id="dailyChecklistItems"></div>
             </div>
         </div>
 
-        <div class="form-section">
-            <div class="input-group">
-                <input type="text" id="newItemInput" placeholder="Add a new task..." maxlength="200">
-                <button class="btn btn-primary" onclick="addItem()">Add</button>
+        <div id="longtermTab" class="tab-content">
+            <div class="stats">
+                <h3 style="color: var(--accent-secondary); margin-bottom: 8px;">Long Term Progress</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-value" id="longtermCompletedCount">0</span>
+                        <div class="stat-label">Completed</div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="longtermTotalCount">0</span>
+                        <div class="stat-label">Total Tasks</div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="longtermCompletionRate">0%</span>
+                        <div class="stat-label">Success Rate</div>
+                    </div>
+                </div>
             </div>
-            <div class="control-buttons">
-                <button class="btn btn-secondary" onclick="newDay()">New Day</button>
-                <button class="btn btn-danger" onclick="confirmClear()">Clear All</button>
-            </div>
-        </div>
 
-        <div class="checklist">
-            <div id="checklistItems"></div>
+            <div class="form-section">
+                <div class="input-group">
+                    <input type="text" id="longtermNewItemInput" class="newItemInput" placeholder="Add a new long term task..." maxlength="200">
+                    <button class="btn btn-primary" onclick="app.addItem('longterm')">Add</button>
+                </div>
+                <div class="control-buttons">
+                    <button class="btn btn-danger" onclick="app.confirmClear('longterm')">Clear All</button>
+                </div>
+            </div>
+
+            <div class="checklist">
+                <div id="longtermChecklistItems"></div>
+            </div>
         </div>
     </div>
 
@@ -416,8 +567,8 @@
             <h3>Confirm Action</h3>
             <p id="confirmMessage">Are you sure you want to proceed?</p>
             <div class="modal-buttons">
-                <button class="btn btn-danger" onclick="executeConfirmAction()">Yes</button>
-                <button class="btn btn-secondary" onclick="hideModal()">Cancel</button>
+                <button class="btn btn-danger" onclick="app.executeConfirmAction()">Yes</button>
+                <button class="btn btn-secondary" onclick="app.hideModal()">Cancel</button>
             </div>
         </div>
     </div>
@@ -428,8 +579,8 @@
             <h3>Edit Task</h3>
             <input type="text" id="editInput" class="edit-input" maxlength="200">
             <div class="modal-buttons">
-                <button class="btn btn-primary" onclick="saveEdit()">Save</button>
-                <button class="btn btn-secondary" onclick="hideModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="app.saveEdit()">Save</button>
+                <button class="btn btn-secondary" onclick="app.hideModal()">Cancel</button>
             </div>
         </div>
     </div>
@@ -437,8 +588,11 @@
     <script>
         class DailyChecklist {
             constructor() {
-                this.items = [];
+                this.dailyItems = [];
+                this.longtermItems = [];
+                this.currentTab = 'daily';
                 this.currentEditIndex = -1;
+                this.currentEditTab = 'daily';
                 this.confirmAction = null;
                 this.stats = {
                     streak: 0,
@@ -452,10 +606,18 @@
             }
 
             setupEventListeners() {
-                const input = document.getElementById('newItemInput');
-                input.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter' && input.value.trim()) {
-                        this.addItem();
+                const dailyInput = document.getElementById('dailyNewItemInput');
+                const longtermInput = document.getElementById('longtermNewItemInput');
+                
+                dailyInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && dailyInput.value.trim()) {
+                        this.addItem('daily');
+                    }
+                });
+
+                longtermInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && longtermInput.value.trim()) {
+                        this.addItem('longterm');
                     }
                 });
 
@@ -469,12 +631,39 @@
                 });
             }
 
-            addItem() {
-                const input = document.getElementById('newItemInput');
+            switchTab(tab) {
+                this.currentTab = tab;
+                
+                // Update tab buttons
+                document.querySelectorAll('.tab-button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                event.target.classList.add('active');
+                
+                // Update tab content
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(tab + 'Tab').classList.add('active');
+                
+                this.render();
+                this.updateStats();
+            }
+
+            toggleTheme() {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+            }
+
+            addItem(tab) {
+                const input = document.getElementById(tab + 'NewItemInput');
                 const text = input.value.trim();
                 
                 if (text) {
-                    this.items.push({
+                    const items = tab === 'daily' ? this.dailyItems : this.longtermItems;
+                    items.push({
                         id: Date.now(),
                         text: text,
                         completed: false,
@@ -487,22 +676,27 @@
                 }
             }
 
-            toggleItem(index) {
-                if (index >= 0 && index < this.items.length) {
-                    this.items[index].completed = !this.items[index].completed;
+            toggleItem(tab, index) {
+                const items = tab === 'daily' ? this.dailyItems : this.longtermItems;
+                if (index >= 0 && index < items.length) {
+                    items[index].completed = !items[index].completed;
                     this.saveData();
                     this.render();
                     this.updateStats();
                     
-                    // Check if this completes the day
-                    this.checkDayCompletion();
+                    // Check if this completes the day (only for daily tab)
+                    if (tab === 'daily') {
+                        this.checkDayCompletion();
+                    }
                 }
             }
 
-            editItem(index) {
+            editItem(tab, index) {
                 this.currentEditIndex = index;
+                this.currentEditTab = tab;
+                const items = tab === 'daily' ? this.dailyItems : this.longtermItems;
                 const editInput = document.getElementById('editInput');
-                editInput.value = this.items[index].text;
+                editInput.value = items[index].text;
                 this.showModal('editModal');
                 setTimeout(() => editInput.focus(), 100);
             }
@@ -512,7 +706,8 @@
                 const newText = editInput.value.trim();
                 
                 if (newText && this.currentEditIndex >= 0) {
-                    this.items[this.currentEditIndex].text = newText;
+                    const items = this.currentEditTab === 'daily' ? this.dailyItems : this.longtermItems;
+                    items[this.currentEditIndex].text = newText;
                     this.saveData();
                     this.render();
                 }
@@ -520,9 +715,10 @@
                 this.hideModal();
             }
 
-            deleteItem(index) {
+            deleteItem(tab, index) {
                 this.confirmAction = () => {
-                    this.items.splice(index, 1);
+                    const items = tab === 'daily' ? this.dailyItems : this.longtermItems;
+                    items.splice(index, 1);
                     this.saveData();
                     this.render();
                     this.updateStats();
@@ -533,10 +729,11 @@
                 this.showModal('confirmModal');
             }
 
-            moveItem(fromIndex, toIndex) {
-                if (fromIndex !== toIndex && toIndex >= 0 && toIndex < this.items.length) {
-                    const item = this.items.splice(fromIndex, 1)[0];
-                    this.items.splice(toIndex, 0, item);
+            moveItem(tab, fromIndex, toIndex) {
+                const items = tab === 'daily' ? this.dailyItems : this.longtermItems;
+                if (fromIndex !== toIndex && toIndex >= 0 && toIndex < items.length) {
+                    const item = items.splice(fromIndex, 1)[0];
+                    items.splice(toIndex, 0, item);
                     this.saveData();
                     this.render();
                 }
@@ -544,8 +741,8 @@
 
             newDay() {
                 // Check if day was completed before resetting
-                const completedCount = this.items.filter(item => item.completed).length;
-                const totalCount = this.items.length;
+                const completedCount = this.dailyItems.filter(item => item.completed).length;
+                const totalCount = this.dailyItems.length;
                 
                 if (totalCount > 0 && completedCount === totalCount) {
                     this.updateStreak(true);
@@ -554,15 +751,19 @@
                 }
                 
                 // Reset all items to uncompleted
-                this.items.forEach(item => item.completed = false);
+                this.dailyItems.forEach(item => item.completed = false);
                 this.saveData();
                 this.render();
                 this.updateStats();
             }
 
-            confirmClear() {
+            confirmClear(tab) {
                 this.confirmAction = () => {
-                    this.items = [];
+                    if (tab === 'daily') {
+                        this.dailyItems = [];
+                    } else {
+                        this.longtermItems = [];
+                    }
                     this.saveData();
                     this.render();
                     this.updateStats();
@@ -596,7 +797,6 @@
                 
                 if (dayCompleted) {
                     if (this.stats.lastCompletedDate === today) {
-                        // Already counted today
                         return;
                     }
                     
@@ -609,24 +809,19 @@
                         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                         
                         if (diffDays === 1) {
-                            // Consecutive day
                             this.stats.streak++;
                         } else if (diffDays > 1) {
-                            // Streak broken
                             this.stats.streak = 1;
                         }
                     } else {
-                        // First completion
                         this.stats.streak = 1;
                     }
                     
                     this.stats.lastCompletedDate = today;
                     this.stats.totalDaysCompleted++;
                 } else {
-                    // Day not completed - streak might be broken
                     const today = new Date().toDateString();
                     if (this.stats.lastCompletedDate !== today) {
-                        // Only reset if we haven't completed today yet
                         const lastDate = this.stats.lastCompletedDate ? 
                             new Date(this.stats.lastCompletedDate) : null;
                         
@@ -645,8 +840,8 @@
             }
 
             checkDayCompletion() {
-                const completedCount = this.items.filter(item => item.completed).length;
-                const totalCount = this.items.length;
+                const completedCount = this.dailyItems.filter(item => item.completed).length;
+                const totalCount = this.dailyItems.length;
                 
                 if (totalCount > 0 && completedCount === totalCount) {
                     this.updateStreak(true);
@@ -655,45 +850,49 @@
             }
 
             updateStats() {
-                const completedCount = this.items.filter(item => item.completed).length;
-                const totalCount = this.items.length;
+                const items = this.currentTab === 'daily' ? this.dailyItems : this.longtermItems;
+                const completedCount = items.filter(item => item.completed).length;
+                const totalCount = items.length;
                 const completionRate = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
                 
-                document.getElementById('completedCount').textContent = completedCount;
-                document.getElementById('totalCount').textContent = totalCount;
-                document.getElementById('completionRate').textContent = completionRate + '%';
+                const prefix = this.currentTab === 'daily' ? 'daily' : 'longterm';
+                document.getElementById(prefix + 'CompletedCount').textContent = completedCount;
+                document.getElementById(prefix + 'TotalCount').textContent = totalCount;
+                document.getElementById(prefix + 'CompletionRate').textContent = completionRate + '%';
             }
 
             render() {
-                const container = document.getElementById('checklistItems');
+                const items = this.currentTab === 'daily' ? this.dailyItems : this.longtermItems;
+                const container = document.getElementById(this.currentTab + 'ChecklistItems');
                 
-                if (this.items.length === 0) {
+                if (items.length === 0) {
                     container.innerHTML = '<div class="empty-state">No tasks yet. Add one above to get started!</div>';
                     return;
                 }
                 
-                container.innerHTML = this.items.map((item, index) => `
+                container.innerHTML = items.map((item, index) => `
                     <div class="checklist-item ${item.completed ? 'completed' : ''}" 
                          draggable="true" 
-                         ondragstart="app.handleDragStart(event, ${index})"
+                         ondragstart="app.handleDragStart(event, '${this.currentTab}', ${index})"
                          ondragover="app.handleDragOver(event)"
-                         ondrop="app.handleDrop(event, ${index})"
+                         ondrop="app.handleDrop(event, '${this.currentTab}', ${index})"
                          ondragend="app.handleDragEnd(event)">
                         <div class="item-checkbox ${item.completed ? 'completed' : ''}" 
-                             onclick="app.toggleItem(${index})">
+                             onclick="app.toggleItem('${this.currentTab}', ${index})">
                             ${item.completed ? '✓' : ''}
                         </div>
                         <div class="item-text">${this.escapeHtml(item.text)}</div>
                         <div class="item-controls">
                             <button class="control-btn drag-handle" title="Drag to reorder">⋮⋮</button>
-                            <button class="control-btn edit-btn" onclick="app.editItem(${index})" title="Edit">✎</button>
-                            <button class="control-btn delete-btn" onclick="app.deleteItem(${index})" title="Delete">×</button>
+                            <button class="control-btn edit-btn" onclick="app.editItem('${this.currentTab}', ${index})" title="Edit">✎</button>
+                            <button class="control-btn delete-btn" onclick="app.deleteItem('${this.currentTab}', ${index})" title="Delete">×</button>
                         </div>
                     </div>
                 `).join('');
             }
 
-            handleDragStart(e, index) {
+            handleDragStart(e, tab, index) {
+                this.draggedTab = tab;
                 this.draggedIndex = index;
                 e.dataTransfer.effectAllowed = 'move';
                 e.target.classList.add('dragging');
@@ -705,12 +904,12 @@
                 e.currentTarget.classList.add('drag-over');
             }
 
-            handleDrop(e, targetIndex) {
+            handleDrop(e, tab, targetIndex) {
                 e.preventDefault();
                 e.currentTarget.classList.remove('drag-over');
                 
-                if (this.draggedIndex !== undefined && this.draggedIndex !== targetIndex) {
-                    this.moveItem(this.draggedIndex, targetIndex);
+                if (this.draggedTab === tab && this.draggedIndex !== undefined && this.draggedIndex !== targetIndex) {
+                    this.moveItem(tab, this.draggedIndex, targetIndex);
                 }
             }
 
@@ -720,6 +919,7 @@
                     item.classList.remove('drag-over');
                 });
                 this.draggedIndex = undefined;
+                this.draggedTab = undefined;
             }
 
             escapeHtml(text) {
@@ -730,7 +930,8 @@
 
             saveData() {
                 const data = {
-                    items: this.items,
+                    dailyItems: this.dailyItems,
+                    longtermItems: this.longtermItems,
                     stats: this.stats,
                     lastSaved: new Date().toISOString()
                 };
@@ -742,72 +943,55 @@
                     const saved = localStorage.getItem('dailyChecklist');
                     if (saved) {
                         const data = JSON.parse(saved);
-                        this.items = data.items || [];
+                        this.dailyItems = data.dailyItems || data.items || [];
+                        this.longtermItems = data.longtermItems || [];
                         this.stats = { ...this.stats, ...(data.stats || {}) };
                     } else {
-                        // Default tasks for new users
-                        this.items = [
+                        // Default tasks for new users (only for daily tab)
+                        this.dailyItems = [
                             {
-                                id: Date.now(),
+                                id: Date.now() + 1,
                                 text: 'Wake Up',
                                 completed: false,
                                 createdAt: new Date().toISOString()
                             },
                             {
-                                id: Date.now() + 1,
+                                id: Date.now(),
                                 text: 'Water',
                                 completed: false,
                                 createdAt: new Date().toISOString()
                             }
                         ];
+                        this.longtermItems = [];
                         this.saveData();
                     }
+
+                    // Load theme
+                    const savedTheme = localStorage.getItem('theme') || 'dark';
+                    document.documentElement.setAttribute('data-theme', savedTheme);
                 } catch (error) {
                     console.error('Error loading saved data:', error);
-                    this.items = [
+                    this.dailyItems = [
                         {
-                            id: Date.now(),
+                            id: Date.now() + 1,
                             text: 'Wake Up',
                             completed: false,
                             createdAt: new Date().toISOString()
                         },
                         {
-                            id: Date.now() + 1,
+                            id: Date.now(),
                             text: 'Water',
                             completed: false,
                             createdAt: new Date().toISOString()
                         }
                     ];
+                    this.longtermItems = [];
                 }
             }
         }
 
         // Global functions for HTML onclick handlers
         const app = new DailyChecklist();
-        
-        function addItem() {
-            app.addItem();
-        }
-        
-        function newDay() {
-            app.newDay();
-        }
-        
-        function confirmClear() {
-            app.confirmClear();
-        }
-        
-        function executeConfirmAction() {
-            app.executeConfirmAction();
-        }
-        
-        function hideModal() {
-            app.hideModal();
-        }
-        
-        function saveEdit() {
-            app.saveEdit();
-        }
     </script>
 </body>
 </html>
