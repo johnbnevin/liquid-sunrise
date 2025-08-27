@@ -1,10 +1,9 @@
 Liquid Sunrise v2.0 - Release Notes
-🌅 The Gamified Daily Checklist That Makes Productivity Beautiful
+🌅 The Gamified Tasks Checklist That Makes Productivity Beautiful
 Release Date: August 7, 2025
 
 (✨ What's New in v2.0)
 - Added 2nd checklist for long-term tasks, a favicon, and dark/light mode.
-
 
 Core Checklist Features
 
